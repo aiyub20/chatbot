@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAFINAH - Chatbot Islamik</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f3f4f6;
+      padding: 2rem;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2563eb;
+    }
+    #chatbox {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #e5e7eb;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background: #f9fafb;
+      margin-bottom: 1rem;
+    }
+    .message {
+      margin-bottom: 1rem;
+    }
+    .user { color: #1d4ed8; }
+    .bot { color: #047857; }
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 SAFINAH</h1>
+    <p style="text-align: center; font-weight: bold; color: #4b5563;">Smart AI for Islamic-Based Learning and Guidance</p>
+    <p style="text-align: center;">Pembelajaran Matematika Islami</p>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Tanyakan sesuatu..." />
+    <button onclick="sendMessage()">Kirim</button>
+  </div>
+
+  <script>
+    const chatbox = document.getElementById('chatbox');
+    const input = document.getElementById('userInput');
+
+    function appendMessage(sender, text) {
+      const div = document.createElement('div');
+      div.classList.add('message');
+      div.innerHTML = `<strong class="${sender}">${sender === 'user' ? 'Kamu' : 'SAFINAH'}:</strong> ${text}`;
+      chatbox.appendChild(div);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+      appendMessage('user', text);
+      input.value = '';
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+        appendMessage('bot', data.reply);
+      } catch (error) {
+        appendMessage('bot', 'Maaf, terjadi kesalahan.');
+      }
+    }
+    window.onload = () => {
+      appendMessage('bot', 'Assalamu’alaikum warahmatullahi wabarakatuh. Saya SAFINAH, siap membantu pembelajaran matematika Islami dan nilai-nilai keislaman. 😊');
+    };
+  </script>
+</body>
+</html>
